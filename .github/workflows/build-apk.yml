@@ -1,0 +1,40 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (kèm submodule TinySoundFont)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cài JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cài Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Chấp nhận license và cài NDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "ndk;29.0.14206865"
+
+      - name: Build APK play debug
+        run: |
+          chmod +x gradlew
+          ./gradlew assemblePlayDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: J2ME-Loader-play-debug
+          path: app/build/outputs/apk/play/debug/*.apk
+          if-no-files-found: error
