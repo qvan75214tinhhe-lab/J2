@@ -19,9 +19,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Cài Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Chấp nhận license và cài NDK
         run: |
           yes | sdkmanager --licenses > /dev/null || true
